@@ -1,0 +1,73 @@
+--------------------------------
+Control-flow graph generation
+--------------------------------
+
+Code explanation: This code analyzes binary files by extracting their control flow graphs. It loads a program into the Angr framework, builds a graph representing the program's execution paths, counts the blocks and connections, and tallies the types of machine instructions used. It then exports this graph to a DOT file for visualization and prints statistics about the program's structure.
+
+[*] Analyzing binary: test
+[*] Generating CFG...
+[+] Number of nodes in the graph: 67
+[+] Number of edges in the graph: 78
+[+] Number of different instruction types: 22
+[*] Instruction type distribution:
+  mov: 25
+  nop: 19
+  endbr64: 15
+  push: 14
+  lea: 13
+  call: 10
+  ret: 9
+  pop: 8
+  je: 8
+  bnd jmp: 8
+[*] Exporting CFG to test.cfg.dot...
+[+] CFG exported to test.cfg.dot
+
+[*] Summary:
+[+] 1. Number of nodes: 67
+[+] 2. Number of edges: 78
+[+] 3. Number of different instruction types: 22
+[+] CFG dot file: test.cfg.dot
+
+---------------------
+Symbolic Execution
+---------------------
+
+Code explanation: This code analyzes binary files to find passwords. It locates all calls to the "puts" function, extracts the strings being printed, and uses symbolic execution to determine what user inputs would reach each print statement. It replaces the scanf function with a custom handler for symbolic analysis and identifies when an input matches the expected password value (3214).
+
+[*] Loading binary: test
+[*] Generating CFG to find 'puts' calls...
+[+] Found 'puts' function at 0x401070
+[*] Finding all calls to 'puts'...
+[+] Found 'puts' call at 0x4011d4 in function main
+[+] Found 'puts' call at 0x4011e2 in function main
+[+] Found 2 'puts' calls in the binary
+WARNING  | 2025-03-14 15:41:36,972 | angr.storage.memory_mixins.default_filler_mixin | The program is accessing register with an unspecified value. This could indicate unwanted behavior.
+WARNING  | 2025-03-14 15:41:36,972 | angr.storage.memory_mixins.default_filler_mixin | angr will cope with this by generating an unconstrained symbolic variable and continuing. You can resolve this by:
+WARNING  | 2025-03-14 15:41:36,972 | angr.storage.memory_mixins.default_filler_mixin | 1) setting a value to the initial state
+WARNING  | 2025-03-14 15:41:36,972 | angr.storage.memory_mixins.default_filler_mixin | 2) adding the state option ZERO_FILL_UNCONSTRAINED_{MEMORY,REGISTERS}, to make unknown regions hold null
+WARNING  | 2025-03-14 15:41:36,972 | angr.storage.memory_mixins.default_filler_mixin | 3) adding the state option SYMBOL_FILL_UNCONSTRAINED_{MEMORY,REGISTERS}, to suppress these messages.
+WARNING  | 2025-03-14 15:41:36,973 | angr.storage.memory_mixins.default_filler_mixin | Filling register rdi with 8 unconstrained bytes referenced from 0x4011d4 (main+0x4b in test (0x11d4))
+WARNING  | 2025-03-14 15:41:37,123 | angr.storage.memory_mixins.default_filler_mixin | Filling memory at 0xfffffe0000000000 with 100 unconstrained bytes referenced from 0x4011d4 (main+0x4b in test (0x11d4))
+[+] String at 0x4011d4: b''
+WARNING  | 2025-03-14 15:41:37,159 | angr.storage.memory_mixins.default_filler_mixin | Filling register rdi with 8 unconstrained bytes referenced from 0x4011e2 (main+0x59 in test (0x11e2))
+WARNING  | 2025-03-14 15:41:37,248 | angr.storage.memory_mixins.default_filler_mixin | Filling memory at 0xffff000000000000 with 100 unconstrained bytes referenced from 0x4011e2 (main+0x59 in test (0x11e2))
+[+] String at 0x4011e2: b''
+WARNING  | 2025-03-14 15:41:37,276 | angr.project   | Address is already hooked, during hook(0x500018, <SimProcedure MyScanf>). Re-hooking.
+
+[*] Solving for input to reach 'puts' call at 0x4011d4
+[*] Starting symbolic execution...
+[+] Found solution to reach 'puts' at 0x4011d4:
+    Input (decimal): 3214
+    Input (hex): 0xc8e
+[+] This matches the expected password (0xc8e/3214)!
+
+[*] Solving for input to reach 'puts' call at 0x4011e2
+[*] Starting symbolic execution...
+[+] Found solution to reach 'puts' at 0x4011e2:
+    Input (decimal): 0
+    Input (hex): 0x0
+
+[*] Summary of results:
+  - To reach 'puts' at 0x4011d4 (string: b''), input: 3214 (0xc8e)
+  - To reach 'puts' at 0x4011e2 (string: b''), input: 0 (0x0)
