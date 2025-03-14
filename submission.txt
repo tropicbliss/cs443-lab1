@@ -2,8 +2,6 @@
 Control-flow graph generation
 --------------------------------
 
-Code explanation: This code analyzes binary files by extracting their control flow graphs. It loads a program into the Angr framework, builds a graph representing the program's execution paths, counts the blocks and connections, and tallies the types of machine instructions used. It then exports this graph to a DOT file for visualization and prints statistics about the program's structure.
-
 [*] Analyzing binary: test
 [*] Generating CFG...
 [+] Number of nodes in the graph: 67
@@ -32,8 +30,6 @@ Code explanation: This code analyzes binary files by extracting their control fl
 ---------------------
 Symbolic Execution
 ---------------------
-
-Code explanation: This code analyzes binary files to find passwords. It locates all calls to the "puts" function, extracts the strings being printed, and uses symbolic execution to determine what user inputs would reach each print statement. It replaces the scanf function with a custom handler for symbolic analysis and identifies when an input matches the expected password value (3214).
 
 [*] Loading binary: test
 [*] Generating CFG to find 'puts' calls...
